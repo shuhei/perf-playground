@@ -1,0 +1,15 @@
+{
+  "name": "perf-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "sudo docker build . -t perf-test",
+    "start": "sudo docker run --rm -itd -p 8080:8080 perf-test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
