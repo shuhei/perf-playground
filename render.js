@@ -1,10 +1,28 @@
-module.exports = function render({ posts, time }) {
-  const start = Date.now();
-  while (Date.now() - start - 30) {}
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
 
-  const postList = posts.map(post =>
-    `<div><h2>${post.title}</h2><p>${post.body}</p></div>`
-  ).join('');
+class Post extends React.Component {
+  render() {
+    const post = this.props.post;
+    return React.createElement('div', {}, [
+      React.createElement('h2', { key: 'heading' }, post.title),
+      React.createElement('p', { key: 'body', }, post.body)
+    ]);
+  }
+}
+
+class PostList extends React.Component {
+  render() {
+    const children = this.props.posts
+      .map(post => React.createElement(Post, { post, key: post.id }));
+    return React.createElement('div', {}, children);
+  }
+}
+
+module.exports = function render({ posts, time }) {
+  const postList = React.createElement(PostList, { posts });
+  const html = ReactDOMServer.renderToString(postList);
+
   return `<!DOCTYPE html>
 <html>
   <head>
@@ -19,7 +37,7 @@ module.exports = function render({ posts, time }) {
   <body>
     <h1>Sample Page</h1>
     <p>${time}</p>
-    ${postList}
+    ${html}
   </body>
 </html>`;
 };
