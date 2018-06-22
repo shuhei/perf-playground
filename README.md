@@ -2,7 +2,7 @@
 
 A playground for [perf(1)](http://man7.org/linux/man-pages/man1/perf.1.html) and [FlameGraph](https://github.com/brendangregg/FlameGraph) with Node.js and Docker
 
-The way to make FlameGraph is based on [Making FlameGraphs with Containerized Java](http://blog.alicegoldfuss.com/making-flamegraphs-with-containerized-java/).
+The way to make FlameGraph for a process in Docker container is based on [Making FlameGraphs with Containerized Java](http://blog.alicegoldfuss.com/making-flamegraphs-with-containerized-java/).
 
 ## Try
 
