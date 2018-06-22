@@ -1,6 +1,6 @@
 # perf-playground
 
-A playground for perf command and flamegraph with Node.js and Docker
+A playground for [perf(1)](http://man7.org/linux/man-pages/man1/perf.1.html) cand [FlameGraph](https://github.com/brendangregg/FlameGraph) with Node.js and Docker
 
 ```sh
 # Build a Docker image and run it in the background
