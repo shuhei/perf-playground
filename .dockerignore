@@ -1,0 +1,7 @@
+FlameGraph
+*.svg
+perf.data*
+README.md
+flame.sh
+*.clinic-*
+*.log
