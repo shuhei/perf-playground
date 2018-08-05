@@ -1,5 +1,6 @@
 const url = require('url');
 const https = require('https');
+const zlib = require('zlib');
 
 const agent = new https.Agent({
   keepAlive: true,
@@ -17,21 +18,29 @@ function getAPI(uri) {
       hostname,
       path,
       agent,
+      headers: {
+        'accept-encoding': 'gzip',
+      },
     };
     const req = https.get(options, (res) => {
       console.timeEnd(name);
       console.time(nameDone);
       if (res.statusCode !== 200) {
         reject(new Error(`Non-200 status code ${res.statusCode}`));
+        res.resume();
         return;
       }
-      res.setEncoding('utf8');
+      const stream = (res.headers['content-encoding'] || '').includes('gzip')
+        ? res.pipe(zlib.createGunzip())
+        : res;
+      stream.setEncoding('utf8');
       let buffer = '';
-      res.on('data', (chunk) => {
+      stream.on('data', (chunk) => {
         buffer += chunk;
       });
-      res.on('end', () => {
+      stream.on('end', () => {
         console.timeEnd(nameDone);
+        // try/catch is not deoptimized anymore in Node.js 8.
         try {
           resolve(JSON.parse(buffer));
         } catch (e) {
