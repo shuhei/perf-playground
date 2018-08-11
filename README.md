@@ -7,6 +7,8 @@ The way to make FlameGraph for a process in Docker container is based on [Making
 ## Try
 
 ```sh
+npm install
+
 # Build a Docker image and run it in the background
 npm run build
 npm start
