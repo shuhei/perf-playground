@@ -17,5 +17,5 @@ npm start
 ./flame.sh
 
 # In another terminal...
-ab -c 3 -n 1000 http://localhost:8080/
+ab -c 3 -d 30 http://localhost:8080/
 ```
