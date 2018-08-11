@@ -1,10 +1,13 @@
 const url = require('url');
 const https = require('https');
 const zlib = require('zlib');
+const LRU = require('lru-cache');
 
 const agent = new https.Agent({
   keepAlive: true,
 });
+
+const cache = LRU(500);
 
 function getAPI(uri) {
   const n = Math.random();
@@ -64,7 +67,12 @@ module.exports = function getAPIs() {
     'users',
   ].map(path => getAPI(`https://jsonplaceholder.typicode.com/${path}`));
   return Promise.all(promises)
-    .then(([posts]) => {
+    .then(([posts, comments, albums, photos, todos, users]) => {
+      cache.set(Math.random().toString(), posts);
+      cache.set(Math.random().toString(), comments);
+      cache.set(Math.random().toString(), albums);
+      cache.set(Math.random().toString(), todos);
+      cache.set(Math.random().toString(), users);
       // Use only /posts and ignore the other responses.
       return posts;
     });
