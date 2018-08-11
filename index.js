@@ -14,7 +14,7 @@ const kindMap = {
 };
 const observer = new PerformanceObserver((list, observer) => {
   list.getEntries().forEach((e) => {
-    console.log(`gc ${kindMap[e.kind]} ${e.startTime} ${e.duration} ms`);
+    console.log(`[${e.startTime}] gc ${kindMap[e.kind]} ${e.duration} ms`);
   });
 });
 observer.observe({
