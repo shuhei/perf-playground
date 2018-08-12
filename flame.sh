@@ -9,11 +9,15 @@ container_id=$(sudo docker ps --format '{{.ID}}')
 container_node_pid=$(sudo docker exec ${container_id} pgrep node -f | tail -n 1)
 zerox_dir=prof/0x-${host_node_pid}
 perf_data=${zerox_dir}/perf.data
-mkdir -p ${zerox_dir}
+symbol_file=${zerox_dir}/perf-${host_node_pid}.map
+stack_file=${zerox_dir}/stacks.${host_node_pid}.out
 
 echo container id ${container_id}
 echo host node pid ${host_node_pid}
 echo container node pid ${container_node_pid}
+
+# Make a dedidated directory because 0x reads all the files in a given directory.
+mkdir -p ${zerox_dir}
 
 echo "Start making requests to the server"
 autocannon -c 3 -d 35 -n http://localhost:8080 &
@@ -22,17 +26,17 @@ sleep 5s
 echo "Recording CPU usage"
 sudo perf record -F 99 -p ${host_node_pid} -o ${perf_data} -g -- sleep 30s
 
-# TODO: Who reads this file? And when? Probably `perf script`?
-echo "Copy symbol data"
-sudo docker cp ${container_id}:/tmp/perf-${container_node_pid}.map /tmp/perf-${host_node_pid}.map
+echo "Copy symbol map"
+sudo docker cp ${container_id}:/tmp/perf-${container_node_pid}.map ${symbol_file}
+sudo chown ${user}:${user} ${symbol_file}
+
+echo "Generate stack trace"
+sudo perf script -i ${perf_data} > ${stack_file}.original
+sudo chown ${user}:${user} ${perf_data}
+
+# Fix stack traces by picking latest symbols
+node symbols.js update ${symbol_file} ${stack_file}.original ${stack_file}
 
 echo "Generate flame graph"
-sudo perf script -i ${perf_data} | ./FlameGraph/stackcollapse-perf.pl | ./FlameGraph/flamegraph.pl --colors js > out.svg
-
-# Make a dedidated directory because 0x reads all the files in a given directory.
-sudo perf script -i ${perf_data} > ${zerox_dir}/stacks.${host_node_pid}.out
 0x --visualize-only ${zerox_dir}
 echo "Generated flame graph at ${zerox_dir}"
-
-sudo chown ${user}:${user} ${perf_data}
-cp /tmp/perf-${host_node_pid}.map ${zerox_dir}/
