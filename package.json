@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "sudo docker build . -t perf-test",
+    "build-node8": "sudo docker build . -f Dockerfile.node8 -t perf-test-node8",
+    "build-node10": "sudo docker build . -f Dockerfile.node10 -t perf-test-node10",
     "build-alpine": "sudo docker build . -f Dockerfile.alpine -t perf-test-alpine",
-    "start": "sudo docker run --rm -itd -p 8080:8080 perf-test",
+    "start-node8": "sudo docker run --rm -itd -p 8080:8080 perf-test-node8",
+    "start-node10": "sudo docker run --rm -itd -p 8080:8080 perf-test-node10",
     "start-alpine": "sudo docker run --rm -itd -p 8080:8080 perf-test-alpine"
   },
   "author": "",
