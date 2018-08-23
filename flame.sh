@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 # Get the actual Node.js process. The top one is `bash -c` process to execute Node.js.
-user=$(whoami)
-host_node_pid=$(pgrep node -f | tail -n 1)
+readonly user=$(whoami)
+readonly host_node_pid=$(pgrep node -f | tail -n 1)
 # Get a container ID made from `perf-test` image.
-container_id=$(sudo docker ps --format '{{.ID}}')
+readonly container_id=$(sudo docker ps --format '{{.ID}}')
 # Get the actual Node.js process from the Docker container.
-container_node_pid=$(sudo docker exec ${container_id} pgrep node -f | tail -n 1)
-zerox_dir=prof/0x-${host_node_pid}
-perf_data=${zerox_dir}/perf.data
-symbol_file=${zerox_dir}/perf-${host_node_pid}.map
-stack_file=${zerox_dir}/stacks.${host_node_pid}.out
+readonly container_node_pid=$(sudo docker exec ${container_id} pgrep node -f | tail -n 1)
+readonly zerox_dir=prof/0x-${host_node_pid}
+readonly perf_data=${zerox_dir}/perf.data
+readonly symbol_file=${zerox_dir}/perf-${host_node_pid}.map
+readonly stack_file=${zerox_dir}/stacks.${host_node_pid}.out
 
 echo container id ${container_id}
 echo host node pid ${host_node_pid}
@@ -25,6 +25,7 @@ echo "Waiting for warming up..."
 sleep 5s
 echo "Recording CPU usage"
 sudo perf record -F 99 -p ${host_node_pid} -o ${perf_data} -g -- sleep 30s
+# sudo perf record -F 99 -a -o ${perf_data} -g -- sleep 30s
 
 echo "Copy symbol map"
 sudo docker cp ${container_id}:/tmp/perf-${container_node_pid}.map ${symbol_file}

@@ -4,6 +4,12 @@ A playground for [perf(1)](http://man7.org/linux/man-pages/man1/perf.1.html) and
 
 The way to make FlameGraph for a process in Docker container is based on [Making FlameGraphs with Containerized Java](http://blog.alicegoldfuss.com/making-flamegraphs-with-containerized-java/).
 
+## Prepare
+
+```sh
+sudo apt-get install linux-tools-common linux-tools-$(uname -r)
+```
+
 ## Try
 
 ```sh
@@ -21,7 +27,4 @@ npm run start-alpine
 
 # Generate a flame graph
 ./flame.sh
-
-# In another terminal...
-ab -c 3 -d 30 http://localhost:8080/
 ```
