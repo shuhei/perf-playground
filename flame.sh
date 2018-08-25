@@ -11,12 +11,21 @@ readonly prof_dir=prof/0x-${host_node_pid}
 readonly perf_data=${prof_dir}/perf.data
 readonly symbol_file=${prof_dir}/perf-${host_node_pid}.map
 readonly stack_file=${prof_dir}/stacks.${host_node_pid}.out
-readonly arg=$1
 
-echo "arg:${arg}"
+all_process=false
+
+while getopts ":a" arg; do
+  case $arg in
+    a)
+      all_process=true
+      ;;
+  esac
+done
+
 echo container id "${container_id}"
 echo host node pid "${host_node_pid}"
 echo container node pid "${container_node_pid}"
+echo all process? ${all_process}
 
 # Make a dedidated directory because 0x reads all the files in a given directory.
 mkdir -p "${prof_dir}"
@@ -25,7 +34,7 @@ echo "Start making requests to the server"
 autocannon -c 3 -d 35 -n http://localhost:8080 &
 echo "Waiting for warming up..."
 sleep 5s
-if [ "${arg}" = "--all" ]; then
+if [ "${all_process}" = "true" ]; then
   echo "Recording CPU usage of all processes"
   sudo perf record -F 99 -a -o "${perf_data}" -g -- sleep 30s
 else
