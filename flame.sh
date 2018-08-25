@@ -7,7 +7,7 @@ readonly host_node_pid=$(pgrep node -f | tail -n 1)
 readonly container_id=$(sudo docker ps --format '{{.ID}}')
 # Get the actual Node.js process from the Docker container.
 readonly container_node_pid=$(sudo docker exec ${container_id} pgrep node -f | tail -n 1)
-readonly prof_dir=prof/0x-${host_node_pid}
+readonly prof_dir=prof/node-${host_node_pid}
 readonly perf_data=${prof_dir}/perf.data
 readonly symbol_file=${prof_dir}/perf-${host_node_pid}.map
 readonly stack_file=${prof_dir}/stacks.${host_node_pid}.out
@@ -27,7 +27,7 @@ echo host node pid "${host_node_pid}"
 echo container node pid "${container_node_pid}"
 echo all process? ${all_process}
 
-# Make a dedidated directory because 0x reads all the files in a given directory.
+# Make a dedidated directory
 mkdir -p "${prof_dir}"
 
 echo "Start making requests to the server"
@@ -52,7 +52,3 @@ sudo chown "${user}:${user}" "${perf_data}"
 
 # Fix stack traces by picking latest symbols
 node symbols.js update "${symbol_file}" "${stack_file}.original" "${stack_file}"
-
-echo "Generate flame graph"
-0x --visualize-only "${prof_dir}"
-echo "Generated flame graph at ${prof_dir}"
