@@ -5,3 +5,6 @@ README.md
 flame.sh
 *.clinic-*
 *.log
+.git
+prof
+Dockerfile*
