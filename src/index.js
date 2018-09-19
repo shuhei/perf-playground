@@ -1,6 +1,9 @@
 const express = require('express');
 const getPosts = require('./api');
 const render = require('./render');
+const setUpProfiling = require('./profile');
+
+setUpProfiling();
 
 const {
   PerformanceObserver,
